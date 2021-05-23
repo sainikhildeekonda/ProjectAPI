@@ -27,53 +27,7 @@
         app:layout_constraintStart_toEndOf="@+id/main_searchCity"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/main_cityName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_searchCity" />
-
-    <TextView
-        android:id="@+id/main_cityID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/main_cityName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/main_cityLongitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintEnd_toStartOf="@+id/main_cityLatitude"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_cityName" />
-
-    <TextView
-        android:id="@+id/main_cityLatitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/main_cityLongitude"
-        app:layout_constraintTop_toBottomOf="@+id/main_cityName" />
-
-    <TextView
-        android:id="@+id/main_weatherDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_cityName"
-        app:layout_constraintVertical_bias="0.20" />
+   
 
     <ImageView
         android:id="@+id/main_weatherIcon"
