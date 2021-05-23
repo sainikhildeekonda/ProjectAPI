@@ -40,7 +40,42 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-       
+        //Creating retrofit for specified API
+        Retrofit retrofitWeather = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        //Create Services
+        WeatherMapService weatherMapService = retrofitWeather.create(WeatherMapService.class);
+
+        searchButton.setOnClickListener(v -> {
+            String city = searchQuery.getText().toString();
+
+            //Create Calls
+            Call<WeatherLocation> callCity = weatherMapService.getWeather(city);
+            callCity.enqueue(new Callback<WeatherLocation>() {
+                @Override
+                public void onResponse(Call<WeatherLocation> call, Response<WeatherLocation> response) {
+                    WeatherLocation cityLocation = response.body();
+                    cityName.setText(cityLocation.getName());
+                    cityID.setText("" + cityLocation.getId());
+                    cityLatitude.setText("" + cityLocation.getCoordinates().getLatitude());
+                    cityLongitude.setText("" + cityLocation.getCoordinates().getLongitude());
+                    cityWeatherDescription.setText(cityLocation.getWeather().get(0).getDescription());
+
+                    String iconName = cityLocation.getWeather().get(0).getIcon(); //Combine with http://openweathermap.org/img/wn/10d@2x.png
+                    String iconFullPath = "http://openweathermap.org/img/wn/" + iconName + "@2x.png";
+                    Picasso.get().load(iconFullPath).into(cityWeatherIcon);
+                }
+
+                @Override
+                public void onFailure(Call<WeatherLocation> call, Throwable t) {
+                    Log.e("WEATHER ERROR", "Some info...");
+                    Log.e("Info", call.toString());
+                }
+            });
+        });
 
 
     }
