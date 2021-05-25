@@ -1,82 +1,96 @@
-package com.example.finalprojectapi;
+package com.example.projectapi;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
-import com.example.finalprojectapi.api.entity.WeatherLocation;
-import com.example.finalprojectapi.api.service.WeatherMapService;
-import com.squareup.picasso.Picasso;
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-public class MainActivity extends AppCompatActivity {
-
-    private final String BASE_URL = "http://api.openweathermap.org/data/2.5/";
+    public Toolbar toolbar;
+    public DrawerLayout drawerLayout;
+    public NavController navController;
+    public NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setupNavigationView();
+    }
 
-        EditText searchQuery = findViewById(R.id.main_searchCity);
-        Button searchButton = findViewById(R.id.main_searchButton);
+    public void setupNavigationView(){
 
-        TextView cityName = findViewById(R.id.main_cityName);
-        TextView cityID = findViewById(R.id.main_cityID);
-        TextView cityLongitude = findViewById(R.id.main_cityLongitude);
-        TextView cityLatitude = findViewById(R.id.main_cityLatitude);
-        TextView cityWeatherDescription = findViewById(R.id.main_weatherDescription);
-        ImageView cityWeatherIcon = findViewById(R.id.main_weatherIcon);
-
+        toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
-        //Creating retrofit for specified API
-        Retrofit retrofitWeather = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        //for drawerlayout
+        drawerLayout = findViewById(R.id.drawer_layout);
 
-        //Create Services
-        WeatherMapService weatherMapService = retrofitWeather.create(WeatherMapService.class);
+        //navigation view
+        navigationView = findViewById(R.id.navigationView);
 
-        searchButton.setOnClickListener(v -> {
-            String city = searchQuery.getText().toString();
+        navController = Navigation.findNavController(this, R.id.host_fragment);
 
-            //Create Calls
-            Call<WeatherLocation> callCity = weatherMapService.getWeather(city);
-            callCity.enqueue(new Callback<WeatherLocation>() {
-                @Override
-                public void onResponse(Call<WeatherLocation> call, Response<WeatherLocation> response) {
-                    WeatherLocation cityLocation = response.body();
-                    cityName.setText(cityLocation.getName());
-                    cityID.setText("" + cityLocation.getId());
-                    cityLatitude.setText("" + cityLocation.getCoordinates().getLatitude());
-                    cityLongitude.setText("" + cityLocation.getCoordinates().getLongitude());
-                    cityWeatherDescription.setText(cityLocation.getWeather().get(0).getDescription());
+        NavigationUI.setupActionBarWithNavController(this,navController, drawerLayout);
 
-                    String iconName = cityLocation.getWeather().get(0).getIcon(); //Combine with http://openweathermap.org/img/wn/10d@2x.png
-                    String iconFullPath = "http://openweathermap.org/img/wn/" + iconName + "@2x.png";
-                    Picasso.get().load(iconFullPath).into(cityWeatherIcon);
-                }
-
-                @Override
-                public void onFailure(Call<WeatherLocation> call, Throwable t) {
-                    Log.e("WEATHER ERROR", "Some info...");
-                    Log.e("Info", call.toString());
-                }
-            });
-        });
+        NavigationUI.setupWithNavController(navigationView, navController);
 
 
+        navigationView.setNavigationItemSelectedListener(this);
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }else{
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        return NavigationUI.navigateUp(Navigation.findNavController(this, R.id.host_fragment), drawerLayout);
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+
+        item.setCheckable(true);
+
+        drawerLayout.closeDrawers();
+
+        switch (item.getItemId()){
+
+            case R.id.second:
+                navController.navigate(R.id.profileFragment);
+                break;
+
+            case R.id.third:
+                FirebaseAuth.getInstance().signOut();
+                finish();
+                startActivity(new Intent(this, com.example.projectapi.DefaultActivity.class));
+                break;
+        }
+        return true;
     }
 }
